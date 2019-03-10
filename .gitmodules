@@ -1,0 +1,3 @@
+[submodule "external_dependencies/tensorflow"]
+	path = external_dependencies/tensorflow
+	url = https://github.com/tensorflow/tensorflow
