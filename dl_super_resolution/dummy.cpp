@@ -10,7 +10,7 @@ int main()
     auto a = Placeholder(root, DT_INT32);
     auto c = Add(root, a, {41});
 
-    ClientSession session(root, "test");
+    ClientSession session(root);
     std::vector<Tensor> outputs;
 
     Status s = session.Run({{a, {1}}}, {c}, &outputs);
@@ -18,5 +18,10 @@ int main()
     {
         LOG(INFO) << "Shit";
     }
+    else
+    {
+        LOG(INFO) << "You finally made it!!!";
+    }
+
     return 0;
 }
