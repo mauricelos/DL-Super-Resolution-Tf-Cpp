@@ -13,7 +13,14 @@ In this project, I want to create a state of the art deep learning super resolut
 - Cudnn: v.7.5
 - gcc/g++: v.4.8
 
-#### Command to build and run the project:
+#### Steps required before first build
+- All dependencies are installed
+- Run ./configure inside tensorflow repo
+- Concatenate .bazelrc to .tf_configure.bazelrc to fix bug in Tensorflow v.2.0
+    - ```cat tensorflow/.bazelrc >> tensorflow/.tf_configure.bazelrc ```
+
+
+#### Command to build and run the project
 ```Python
 bazel build //dl_super_resolution:dl_super_resolution
 bazel run //dl_super_resolution:dl_super_resolution
