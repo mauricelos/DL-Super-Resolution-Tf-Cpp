@@ -2,16 +2,26 @@
 ### Introduction
 In this project, I want to create a state of the art deep learning super resolution algorithm using only the Tensorflow C++ API.
 
-Required Installations:
+#### Required Installations
+- Bazel -> [Bazel Install Guide](https://docs.bazel.build/versions/master/install.html)
+- Tensorflow -> [Tensorflow Install Guide from source](https://www.tensorflow.org/install/source)
 
-Bazel -> https://docs.bazel.build/versions/master/install-ubuntu.html (Ubuntu)
+#### Used Setup
+- Bazel: v.0.23.0
+- Tensorflow: v.2.0 (git checkout r2.0)
+- CUDA: v.9.0
+- Cudnn: v.7.5
+- gcc/g++: v.4.8
 
-Tensorflow -> https://www.tensorflow.org/install/source
+#### Command to build and run the project:
+- bazel build //dl_super_resolution:dl_super_resolution
+- bazel run //dl_super_resolution:dl_super_resolution
 
-Bazel version: 0.23.1
-Tensorflow version: 2.0 (git checkout r2.0)
-
-Command to build and run dl_super_resolution:
-
-bazel build //dl_super_resolution --define=grpc_no_ares=true
-bazel run //dl_super_resolution --define=grpc_no_ares=true
+#### IDE Setup
+- IDE: VSCode
+- Extensions:
+    - [Clang-Format](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format)
+    - [vscode-bazel](https://marketplace.visualstudio.com/items?itemName=BazelBuild.vscode-bazel)
+    - [C++ Intellisense](https://marketplace.visualstudio.com/items?itemName=austin.code-gnu-global)
+    - [Markdown Preview Github Styling](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-preview-github-styles)
+    
