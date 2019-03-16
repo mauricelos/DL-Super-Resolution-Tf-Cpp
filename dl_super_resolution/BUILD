@@ -5,13 +5,6 @@ tf_cc_binary(
     srcs = [
         "dummy.cpp",
     ],
-    copts = ["-Iexternal/org_tensorflow"],
-    linkopts = [
-        "-lm",
-        "-Wl,--no-as-needed",
-        "-Wl,--allow-multiple-definition",
-        "-Wl,--whole-archive",
-    ],
     deps = [
         "@org_tensorflow//tensorflow:libtensorflow_cc.so",
         "@org_tensorflow//tensorflow/cc:cc_ops",
