@@ -14,8 +14,10 @@ In this project, I want to create a state of the art deep learning super resolut
 - gcc/g++: v.4.8
 
 #### Command to build and run the project:
-- bazel build //dl_super_resolution:dl_super_resolution
-- bazel run //dl_super_resolution:dl_super_resolution
+```Python
+bazel build //dl_super_resolution:dl_super_resolution
+bazel run //dl_super_resolution:dl_super_resolution
+```
 
 #### IDE Setup
 - IDE: VSCode
@@ -24,4 +26,37 @@ In this project, I want to create a state of the art deep learning super resolut
     - [vscode-bazel](https://marketplace.visualstudio.com/items?itemName=BazelBuild.vscode-bazel)
     - [C++ Intellisense](https://marketplace.visualstudio.com/items?itemName=austin.code-gnu-global)
     - [Markdown Preview Github Styling](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-preview-github-styles)
-    
+
+#### TF Configure bazelrc (for reference)
+
+```C++
+build --action_env PYTHON_BIN_PATH="/path/to/bin/python"
+build --action_env PYTHON_LIB_PATH="/path/to/lib/python2.7/site-packages"
+build --python_path="/path/to/bin/python"
+build:xla --define with_xla_support=true
+build --action_env TF_NEED_OPENCL_SYCL="0"
+build --action_env TF_NEED_ROCM="0"
+build --action_env TF_NEED_CUDA="1"
+build --action_env CUDA_TOOLKIT_PATH="/usr/local/cuda-9.0"
+build --action_env TF_CUDA_VERSION="9.0"
+build --action_env CUDNN_INSTALL_PATH="/usr/local/cuda-9.0"
+build --action_env TF_CUDNN_VERSION="7"
+build --action_env TF_NCCL_VERSION=""
+build --action_env TF_CUDA_COMPUTE_CAPABILITIES="6.1"
+build --action_env LD_LIBRARY_PATH="/usr/local/cuda-9.0/lib64"
+build --action_env TF_CUDA_CLANG="0"
+build --action_env GCC_HOST_COMPILER_PATH="/usr/bin/gcc-4.8"
+build --config=cuda
+test --config=cuda
+build:opt --copt=-march=native
+build:opt --copt=-Wno-sign-compare
+build:opt --host_copt=-march=native
+build:opt --define with_default_optimizations=true
+build:v2 --define=tf_api_version=2
+test --flaky_test_attempts=3
+test --test_size_filters=small,medium
+test --test_tag_filters=-benchmark-test,-no_oss,-oss_serial
+test --build_tag_filters=-benchmark-test,-no_oss
+test --test_tag_filters=-gpu
+test --build_tag_filters=-gpu
+```
