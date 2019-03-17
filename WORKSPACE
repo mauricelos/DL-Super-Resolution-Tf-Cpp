@@ -21,8 +21,10 @@ load("@io_bazel_rules_closure//closure:defs.bzl", "closure_repositories")
 
 closure_repositories()
 
-load("@org_tensorflow//third_party/toolchains/preconfig/generate:archives.bzl",
-     "bazel_toolchains_archive")
+load(
+    "@org_tensorflow//third_party/toolchains/preconfig/generate:archives.bzl",
+    "bazel_toolchains_archive",
+)
 
 bazel_toolchains_archive()
 
@@ -40,8 +42,10 @@ load(
 
 container_repositories()
 
-load("@org_tensorflow//third_party/toolchains/preconfig/generate:workspace.bzl",
-     "remote_config_workspace")
+load(
+    "@org_tensorflow//third_party/toolchains/preconfig/generate:workspace.bzl",
+    "remote_config_workspace",
+)
 
 remote_config_workspace()
 
@@ -52,6 +56,7 @@ http_archive(
     strip_prefix = "rules_apple-0.14.0",
     urls = ["https:@org_tensorflow//github.com/bazelbuild/rules_apple/archive/0.14.0.tar.gz"],
 )
+
 http_file(
     name = "xctestrunner",
     executable = 1,
@@ -81,8 +86,8 @@ http_archive(
 
 http_archive(
     name = "com_github_apple_swift_swift_protobuf",
-    type = "zip",
     strip_prefix = "swift-protobuf-1.2.0/",
+    type = "zip",
     urls = ["https://github.com/apple/swift-protobuf/archive/1.2.0.zip"],
 )
 
@@ -90,19 +95,23 @@ http_archive(
 # Since we defined all the "git_repository" rules above, the following call will
 # skip redefining them.
 load("@build_bazel_rules_swift//swift:repositories.bzl", "swift_rules_dependencies")
+
 swift_rules_dependencies()
 
 # We must check the bazel version before trying to parse any other BUILD
 # files, in case the parsing of those build files depends on the bazel
 # version we require here.
 load("@org_tensorflow//tensorflow:version_check.bzl", "check_bazel_version_at_least")
+
 check_bazel_version_at_least("0.19.0")
 
 load("@org_tensorflow//tensorflow:workspace.bzl", "tf_workspace")
-
 load("@org_tensorflow//third_party/android:android_configure.bzl", "android_configure")
-android_configure(name="local_config_android")
+
+android_configure(name = "local_config_android")
+
 load("@local_config_android//:android.bzl", "android_workspace")
+
 android_workspace()
 
 # Please add all new TensorFlow dependencies in workspace.bzl.
