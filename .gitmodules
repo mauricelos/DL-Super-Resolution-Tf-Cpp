@@ -1,3 +1,6 @@
 [submodule "external_dependencies/tensorflow"]
 	path = external_dependencies/tensorflow
 	url = https://github.com/tensorflow/tensorflow
+[submodule "external_dependencies/googletest"]
+	path = external_dependencies/googletest
+	url = https://github.com/google/googletest
