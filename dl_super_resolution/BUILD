@@ -15,3 +15,12 @@ tf_cc_binary(
         "@org_tensorflow//tensorflow/core:tensorflow",
     ],
 )
+
+cc_test(
+    name = "dl_super_resolution_tests",
+    srcs = glob(["test/*.cpp"]),
+    deps = [
+        "dl_super_resolution",
+        "@googletest//:gtest_main",
+    ],
+)

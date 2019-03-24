@@ -1,6 +1,11 @@
 workspace(name = "dl_super_resolution_tf_cpp")
 
 local_repository(
+    name = "googletest",
+    path = "external_dependencies/googletest",
+)
+
+local_repository(
     name = "org_tensorflow",
     path = "external_dependencies/tensorflow",
 )
