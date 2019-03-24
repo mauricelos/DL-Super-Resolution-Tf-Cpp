@@ -9,6 +9,7 @@ In this project, I want to create a state of the art deep learning super resolut
 #### Used Setup
 - Bazel: v.0.23.0
 - Tensorflow: v.2.0 (git checkout r2.0)
+- Googletest: v.1.8.x (git checkout v.1.8.x)
 - CUDA: v.9.0
 - Cudnn: v.7.5
 - gcc/g++: v.4.8
@@ -20,10 +21,11 @@ In this project, I want to create a state of the art deep learning super resolut
     - ```cat tensorflow/.bazelrc >> tensorflow/.tf_configure.bazelrc ```
 
 
-#### Command to build and run the project
+#### Command to build, run and test the project
 ```Python
 bazel build //dl_super_resolution:dl_super_resolution
 bazel run //dl_super_resolution:dl_super_resolution
+bazel test //dl_super_resolution:dl_super_resolution_tests
 ```
 
 #### IDE Setup
