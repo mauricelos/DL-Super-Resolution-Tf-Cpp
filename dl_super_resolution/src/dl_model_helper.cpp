@@ -3,7 +3,7 @@
 #include "dl_super_resolution/include/dl_model_helper.h"
 
 tensorflow::Status DlModelHelper::CreateTensorFromImage(const std::string& image_file_name,
-                                                        std::vector<tensorflow::Tensor>* tensor_container)
+                                                        std::vector<tensorflow::Tensor> tensor_container)
 {
     tensorflow::Output image_reader;
     auto image_processor_scope = tensorflow::Scope::NewRootScope();
@@ -38,7 +38,9 @@ tensorflow::Status DlModelHelper::CreateTensorFromImage(const std::string& image
         tensorflow::ops::GuaranteeConst(image_processor_scope.WithOpName(bilinear_image_resizer_),
                                         {input_height_, input_width_}));
 
-    tensorflow::ops::Unstack(image_processor_scope.WithOpName(finished_tensor_), resized_tensor, 1);
+    auto normalized_tensor = Normalizer(image_processor_scope, resized_tensor, tensorflow::DataType::DT_FLOAT);
+
+    tensorflow::ops::Unstack(image_processor_scope.WithOpName(finished_tensor_), normalized_tensor, 1);
 
     tensorflow::GraphDef graph;
     TF_RETURN_IF_ERROR(image_processor_scope.ToGraphDef(&graph));
@@ -46,7 +48,25 @@ tensorflow::Status DlModelHelper::CreateTensorFromImage(const std::string& image
     std::unique_ptr<tensorflow::Session> session(tensorflow::NewSession(tensorflow::SessionOptions()));
 
     TF_RETURN_IF_ERROR(session->Create(graph));
-    TF_RETURN_IF_ERROR(session->Run({}, {finished_tensor_}, {}, tensor_container));
+    TF_RETURN_IF_ERROR(session->Run({}, {finished_tensor_}, {}, &tensor_container));
 
     return tensorflow::Status::OK();
+}
+
+tensorflow::Output DlModelHelper::Normalizer(const tensorflow::Scope& scope,
+                                             tensorflow::Input input_tensor,
+                                             tensorflow::DataType dtype)
+{
+    tensorflow::Output output;
+    tensorflow::Node* ret;
+    auto node_out_input_tensor = tensorflow::ops::AsNodeOut(scope, input_tensor);
+    const auto unique_name = scope.GetUniqueNameForOp(tensor_normalizer_);
+    auto builder =
+        tensorflow::NodeBuilder(unique_name, tensor_normalizer_).Input(node_out_input_tensor).Attr("dtype", dtype);
+    scope.UpdateBuilder(&builder);
+    scope.UpdateStatus(builder.Finalize(scope.graph(), &ret));
+    scope.UpdateStatus(scope.DoShapeInference(ret));
+    output = tensorflow::Output(ret, 0);
+
+    return output;
 }

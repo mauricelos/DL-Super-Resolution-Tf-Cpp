@@ -3,6 +3,8 @@
 #ifndef DL_SUPER_RESOLUTION_DL_MODEL_HELPER_H
 #define DL_SUPER_RESOLUTION_DL_MODEL_HELPER_H
 
+#include <vector>
+
 #include "tensorflow/cc/framework/ops.h"
 #include "tensorflow/cc/framework/scope.h"
 #include "tensorflow/cc/ops/array_ops.h"
@@ -11,7 +13,6 @@
 #include "tensorflow/cc/ops/io_ops.h"
 #include "tensorflow/cc/ops/math_ops.h"
 #include "tensorflow/core/framework/tensor.h"
-#include "tensorflow/core/lib/core/stringpiece.h"
 #include "tensorflow/core/public/session.h"
 
 class DlModelHelper
@@ -27,7 +28,7 @@ class DlModelHelper
     }
 
     tensorflow::Status CreateTensorFromImage(const std::string& image_file_name,
-                                             std::vector<tensorflow::Tensor>* tensor_container);
+                                             std::vector<tensorflow::Tensor> tensor_container);
 
   private:
     inline bool EndsWith(std::string const& file_name, std::string const& file_suffix)
@@ -36,6 +37,10 @@ class DlModelHelper
                    ? std::equal(file_suffix.rbegin(), file_suffix.rend(), file_name.rbegin())
                    : false;
     }
+
+    tensorflow::Output Normalizer(const tensorflow::Scope& scope,
+                                  tensorflow::Input input_tensor,
+                                  tensorflow::DataType dtype);
 
     const std::string image_file_reader_{"image_file_reader"};
     const std::string image_png_reader_{"image_png_reader"};

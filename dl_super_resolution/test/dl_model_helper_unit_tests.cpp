@@ -7,6 +7,9 @@ class DlModelHelperTest : public testing::Test
 {
   public:
     DlModelHelper unit_{};
+
+  private:
+    const std::string path_to_test_image_{"../images/unit_test_image.jpeg"};
 };
 
 TEST_F(DlModelHelperTest, DlModelHelper_DefaultConstructorTest)
@@ -56,4 +59,14 @@ TEST_F(DlModelHelperTest, EndsWith_FilenameEndsWithDifferentSuffix)
 
     EXPECT_FALSE(unit_.EndsWith(file_name, file_suffix));
     EXPECT_FALSE(unit_.EndsWith(file_name, alternative_file_suffix));
+}
+
+TEST_F(DlModelHelperTest, CreateTensorFromImage_)
+{
+    const std::uint32_t expected_dimensions{4U};
+    std::vector<tensorflow::Tensor> unit_test_tensor_container;
+
+    // unit_.CreateTensorFromImage(path_to_test_image_, unit_test_tensor_container);
+
+    // EXPECT_EQ(unit_test_tensor_container[0].shape().dims(), expected_dimensions);
 }
