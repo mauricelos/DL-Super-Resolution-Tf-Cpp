@@ -5,7 +5,7 @@ tf_cc_binary(
     srcs = [
         "include/dl_model_helper.h",
         "src/dl_model_helper.cpp",
-        "src/dummy.cpp",  #
+        "src/dummy.cpp",
     ],
     deps = [
         "@org_tensorflow//tensorflow:libtensorflow_cc.so",

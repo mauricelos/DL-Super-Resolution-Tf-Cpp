@@ -3,6 +3,7 @@
 #ifndef DL_SUPER_RESOLUTION_DL_MODEL_HELPER_H
 #define DL_SUPER_RESOLUTION_DL_MODEL_HELPER_H
 
+#include "tensorflow/cc/framework/ops.h"
 #include "tensorflow/cc/framework/scope.h"
 #include "tensorflow/cc/ops/array_ops.h"
 #include "tensorflow/cc/ops/const_op.h"
@@ -36,11 +37,6 @@ class DlModelHelper
                    : false;
     }
 
-    tensorflow::Output Normalizer(const tensorflow::Scope& scope,
-                                  tensorflow::Input input_tensor,
-                                  tensorflow::DataType dtype);
-
-    const tensorflow::Scope image_processor_scope_ = tensorflow::Scope::NewRootScope();
     const std::string image_file_reader_{"image_file_reader"};
     const std::string image_png_reader_{"image_png_reader"};
     const std::string image_jpeg_reader_{"image_jpeg_reader"};
@@ -48,11 +44,9 @@ class DlModelHelper
     const std::string bilinear_image_resizer_{"bilinear_image_resizer"};
     const std::string tensor_normalizer_{"tensor_normalizer"};
     const std::string finished_tensor_{"finished_tensor"};
-    std::uint32_t num_required_image_channels_;
     std::uint32_t input_height_;
     std::uint32_t input_width_;
-    tensorflow::Output image_reader_;
-    tensorflow::GraphDef graph_;
+    std::uint32_t num_required_image_channels_;
 };
 
 #endif  // DL_SUPER_RESOLUTION_DL_MODEL_HELPER_H
