@@ -66,7 +66,7 @@ TEST_F(DlModelHelperTest, CreateTensorFromImage_)
     const std::uint32_t expected_dimensions{4U};
     std::vector<tensorflow::Tensor> unit_test_tensor_container;
 
-    // unit_.CreateTensorFromImage(path_to_test_image_, unit_test_tensor_container);
+    // auto result = unit_.CreateTensorFromImage(path_to_test_image_, unit_test_tensor_container);
 
     // EXPECT_EQ(unit_test_tensor_container[0].shape().dims(), expected_dimensions);
 }

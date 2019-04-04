@@ -1,4 +1,4 @@
-load("@org_tensorflow//tensorflow:tensorflow.bzl", "tf_cc_binary")
+load("@org_tensorflow//tensorflow:tensorflow.bzl", "tf_cc_binary", "tf_cc_test")
 
 tf_cc_binary(
     name = "dl_super_resolution",
@@ -16,7 +16,7 @@ tf_cc_binary(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "dl_super_resolution_tests",
     srcs = glob(["test/*.cpp"]),
     deps = [

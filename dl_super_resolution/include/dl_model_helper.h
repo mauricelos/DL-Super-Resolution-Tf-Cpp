@@ -3,8 +3,6 @@
 #ifndef DL_SUPER_RESOLUTION_DL_MODEL_HELPER_H
 #define DL_SUPER_RESOLUTION_DL_MODEL_HELPER_H
 
-#include <vector>
-
 #include "tensorflow/cc/framework/ops.h"
 #include "tensorflow/cc/framework/scope.h"
 #include "tensorflow/cc/ops/array_ops.h"
@@ -28,7 +26,7 @@ class DlModelHelper
     }
 
     tensorflow::Status CreateTensorFromImage(const std::string& image_file_name,
-                                             std::vector<tensorflow::Tensor> tensor_container);
+                                             std::vector<tensorflow::Tensor>& tensor_container);
 
   private:
     inline bool EndsWith(std::string const& file_name, std::string const& file_suffix)
