@@ -36,20 +36,18 @@ class DlModelHelper
                    : false;
     }
 
-    tensorflow::Output Normalizer(const tensorflow::Scope& scope,
-                                  tensorflow::Input input_tensor,
-                                  tensorflow::DataType dtype);
+    tensorflow::Status ReadEntireFile(tensorflow::Env* env, const std::string& filename, tensorflow::Tensor* output);
 
     const std::string image_file_reader_{"image_file_reader"};
     const std::string image_png_reader_{"image_png_reader"};
     const std::string image_jpeg_reader_{"image_jpeg_reader"};
     const std::string float_caster_{"float_caster"};
-    const std::string bilinear_image_resizer_{"bilinear_image_resizer"};
-    const std::string tensor_normalizer_{"tensor_normalizer"};
-    const std::string finished_tensor_{"finished_tensor"};
+    const std::string dim_expander_{"dimension_expander"};
+    const std::string image_resizer_{"bilinear_image_resizer"};
     std::uint32_t input_height_;
     std::uint32_t input_width_;
     std::uint32_t num_required_image_channels_;
+    std::vector<std::pair<std::string, tensorflow::Tensor>> inputs;
 };
 
 #endif  // DL_SUPER_RESOLUTION_DL_MODEL_HELPER_H

@@ -7,6 +7,7 @@ tf_cc_binary(
         "src/dl_model_helper.cpp",
         "src/dummy.cpp",
     ],
+    data = glob(["images/**"]),
     deps = [
         "@org_tensorflow//tensorflow:libtensorflow_cc.so",
         "@org_tensorflow//tensorflow/cc:cc_ops",
