@@ -1,6 +1,6 @@
 //  dl_model_helper.cpp
 
-#include "dl_super_resolution/include/dl_model_helper.h"
+#include <dl_model_helper.h>
 
 tensorflow::Status DlModelHelper::CreateTensorFromImage(const std::string& image_file_name,
                                                         std::vector<tensorflow::Tensor>& tensor_container)

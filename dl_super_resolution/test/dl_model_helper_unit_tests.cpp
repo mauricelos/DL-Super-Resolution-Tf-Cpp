@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
 #define private public
-#include "dl_super_resolution/include/dl_model_helper.h"
+#include <dl_model_helper.h>
 
 class DlModelHelperTest : public testing::Test
 {
@@ -63,7 +63,6 @@ TEST_F(DlModelHelperTest, EndsWith_FilenameEndsWithDifferentSuffix)
 
 TEST_F(DlModelHelperTest, CreateTensorFromImage_)
 {
-    const auto expected_status{tensorflow::Status::OK()};
     const std::uint32_t expected_dimensions{4U};
     std::vector<tensorflow::Tensor> unit_test_tensor_container;
 
