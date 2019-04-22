@@ -61,7 +61,7 @@ TEST_F(DlModelHelperTest, EndsWith_FilenameEndsWithDifferentSuffix)
     EXPECT_FALSE(unit_.EndsWith(file_name, alternative_file_suffix));
 }
 
-TEST_F(DlModelHelperTest, CreateTensorFromImage_)
+TEST_F(DlModelHelperTest, CreateTensorFromImage_SmallTestImage)
 {
     const std::uint32_t expected_dimensions{4U};
     std::vector<tensorflow::Tensor> unit_test_tensor_container;
@@ -69,4 +69,10 @@ TEST_F(DlModelHelperTest, CreateTensorFromImage_)
     auto result = unit_.CreateTensorFromImage(path_to_test_image_, unit_test_tensor_container);
 
     EXPECT_EQ(unit_test_tensor_container[0].shape().dims(), expected_dimensions);
+}
+
+int main(int argc, char** argv)
+{
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
