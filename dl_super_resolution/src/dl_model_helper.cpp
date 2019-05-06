@@ -3,7 +3,8 @@
 #include <dl_model_helper.h>
 
 tensorflow::Status DlModelHelper::CreateTensorFromImage(const std::string& image_file_name,
-                                                        std::vector<tensorflow::Tensor>& tensor_container)
+                                                        std::vector<tensorflow::Tensor>& tensor_container,
+                                                        const std::array<std::uint32_t, 3>& tensor_dimsensions)
 {
     tensorflow::GraphDef graph;
     tensorflow::Output image_reader;
@@ -20,13 +21,13 @@ tensorflow::Status DlModelHelper::CreateTensorFromImage(const std::string& image
     {
         image_reader = tensorflow::ops::DecodePng(image_processor_scope.WithOpName(image_png_reader_),
                                                   std::move(image_file_reader),
-                                                  tensorflow::ops::DecodePng::Channels(num_required_image_channels_));
+                                                  tensorflow::ops::DecodePng::Channels(tensor_dimsensions[2]));
     }
     else if (EndsWith(image_file_name, ".jpeg"))
     {
         image_reader = tensorflow::ops::DecodeJpeg(image_processor_scope.WithOpName(image_jpeg_reader_),
                                                    std::move(image_file_reader),
-                                                   tensorflow::ops::DecodeJpeg::Channels(num_required_image_channels_));
+                                                   tensorflow::ops::DecodeJpeg::Channels(tensor_dimsensions[2]));
     }
     else
     {
@@ -42,8 +43,9 @@ tensorflow::Status DlModelHelper::CreateTensorFromImage(const std::string& image
     auto resized_tensor = tensorflow::ops::ResizeBilinear(
         image_processor_scope.WithOpName(image_resizer_),
         std::move(dimension_expanded_tensor),
-        tensorflow::ops::Const(image_processor_scope,
-                               {static_cast<std::int32_t>(input_height_), static_cast<std::int32_t>(input_width_)}));
+        tensorflow::ops::Const(
+            image_processor_scope,
+            {static_cast<std::int32_t>(tensor_dimsensions[0]), static_cast<std::int32_t>(tensor_dimsensions[1])}));
 
     TF_RETURN_IF_ERROR(image_processor_scope.ToGraphDef(&graph));
 
@@ -53,6 +55,63 @@ tensorflow::Status DlModelHelper::CreateTensorFromImage(const std::string& image
     TF_RETURN_IF_ERROR(session->Run({inputs}, {image_resizer_}, {}, &tensor_container));
 
     return tensorflow::Status::OK();
+}
+
+tensorflow::Status DlModelHelper::CreateBatchFromTensors(
+    std::uint32_t& batch_size,
+    std::vector<tensorflow::Tensor>& input_tensor_container_down_sampled,
+    std::vector<tensorflow::Tensor>& input_tensor_container_ground_truth,
+    std::vector<tensorflow::Tensor>& batch_tensor_container)
+{
+    if (input_tensor_container_ground_truth.size() != input_tensor_container_down_sampled.size())
+    {
+        return tensorflow::Status(tensorflow::error::Code::INVALID_ARGUMENT, "Containers don't have same size!");
+    }
+    else
+    {
+        tensorflow::GraphDef graph;
+        const auto tensor_batch_scope = tensorflow::Scope::NewRootScope();
+
+        std::vector<tensorflow::Input> temp_tensor_container_ground_truth;
+        std::vector<tensorflow::Input> temp_tensor_container_down_sampled;
+
+        batch_size = (batch_size <= input_tensor_container_ground_truth.size())
+                         ? batch_size
+                         : input_tensor_container_ground_truth.size();
+
+        auto ground_truth_tensor_container_iterator =
+            std::next(input_tensor_container_ground_truth.begin(), batch_size);
+        std::move(input_tensor_container_ground_truth.begin(),
+                  ground_truth_tensor_container_iterator,
+                  std::back_inserter(temp_tensor_container_ground_truth));
+        input_tensor_container_ground_truth.erase(input_tensor_container_ground_truth.begin(),
+                                                  ground_truth_tensor_container_iterator);
+
+        auto down_sampled_tensor_container_iterator =
+            std::next(input_tensor_container_down_sampled.begin(), batch_size);
+        std::move(input_tensor_container_down_sampled.begin(),
+                  down_sampled_tensor_container_iterator,
+                  std::back_inserter(temp_tensor_container_down_sampled));
+        input_tensor_container_down_sampled.erase(input_tensor_container_down_sampled.begin(),
+                                                  down_sampled_tensor_container_iterator);
+
+        tensorflow::InputList input_ground_truth_tensors(temp_tensor_container_ground_truth);
+        tensorflow::ops::Stack(tensor_batch_scope.WithOpName(stack_ground_truth_container_),
+                               input_ground_truth_tensors);
+        tensorflow::InputList input_down_sampled_tensors(temp_tensor_container_down_sampled);
+        tensorflow::ops::Stack(tensor_batch_scope.WithOpName(stack_down_sampled_container_),
+                               input_down_sampled_tensors);
+
+        TF_RETURN_IF_ERROR(tensor_batch_scope.ToGraphDef(&graph));
+
+        std::unique_ptr<tensorflow::Session> session(tensorflow::NewSession(tensorflow::SessionOptions()));
+
+        TF_RETURN_IF_ERROR(session->Create(graph));
+        TF_RETURN_IF_ERROR(session->Run(
+            {}, {stack_down_sampled_container_, stack_ground_truth_container_}, {}, &batch_tensor_container));
+
+        return tensorflow::Status::OK();
+    }
 }
 
 tensorflow::Status DlModelHelper::ReadEntireFile(tensorflow::Env* env,

@@ -12,29 +12,6 @@ class DlModelHelperTest : public testing::Test
     const std::string path_to_test_image_{"dl_super_resolution/images/unit_test_image.jpeg"};
 };
 
-TEST_F(DlModelHelperTest, DlModelHelper_DefaultConstructorTest)
-{
-    const std::uint32_t expected_input_height{1080U};
-    const std::uint32_t expected_input_width{1920U};
-    const std::uint32_t expected_num_required_image_channels{3U};
-
-    EXPECT_EQ(unit_.input_height_, expected_input_height);
-    EXPECT_EQ(unit_.input_width_, expected_input_width);
-    EXPECT_EQ(unit_.num_required_image_channels_, expected_num_required_image_channels);
-}
-
-TEST_F(DlModelHelperTest, DlModelHelper_CustomConstructorTest)
-{
-    const std::uint32_t expected_input_height{900U};
-    const std::uint32_t expected_input_width{1600U};
-    const std::uint32_t expected_num_required_image_channels{2U};
-    DlModelHelper temp_unit{expected_input_height, expected_input_width, expected_num_required_image_channels};
-
-    EXPECT_EQ(temp_unit.input_height_, expected_input_height);
-    EXPECT_EQ(temp_unit.input_width_, expected_input_width);
-    EXPECT_EQ(temp_unit.num_required_image_channels_, expected_num_required_image_channels);
-}
-
 TEST_F(DlModelHelperTest, EndsWith_FilenameEndsWithPNGSuffix)
 {
     const std::string file_name{"image_test.png"};
@@ -63,12 +40,32 @@ TEST_F(DlModelHelperTest, EndsWith_FilenameEndsWithDifferentSuffix)
 
 TEST_F(DlModelHelperTest, CreateTensorFromImage_SmallTestImage)
 {
-    const std::uint32_t expected_dimensions{4U};
+    const tensorflow::TensorShape expected_dimensions{1U, 1080U, 1920U, 3U};
+    const std::array<std::uint32_t, 3> tensor_dimensions{1080U, 1920U, 3U};
     std::vector<tensorflow::Tensor> unit_test_tensor_container;
 
-    auto result = unit_.CreateTensorFromImage(path_to_test_image_, unit_test_tensor_container);
+    auto result = unit_.CreateTensorFromImage(path_to_test_image_, unit_test_tensor_container, tensor_dimensions);
 
-    EXPECT_EQ(unit_test_tensor_container[0].shape().dims(), expected_dimensions);
+    EXPECT_EQ(unit_test_tensor_container.front().shape(), expected_dimensions);
+}
+
+TEST_F(DlModelHelperTest, CreateBatchFromTensors_TwoTensorsSamePictureSameConfig)
+{
+    const tensorflow::TensorShape expected_dimensions{1U, 1U, 1080U, 1920U, 3U};
+    std::uint32_t batch_size{1U};
+    std::vector<tensorflow::Tensor> first_unit_test_tensor_container;
+    std::vector<tensorflow::Tensor> second_unit_test_tensor_container;
+    std::vector<tensorflow::Tensor> batch_tensor_container;
+    auto status_first_tensor_container =
+        unit_.CreateTensorFromImage(path_to_test_image_, first_unit_test_tensor_container);
+    auto status_second_tensor_container =
+        unit_.CreateTensorFromImage(path_to_test_image_, second_unit_test_tensor_container);
+
+    auto result = unit_.CreateBatchFromTensors(
+        batch_size, first_unit_test_tensor_container, second_unit_test_tensor_container, batch_tensor_container);
+
+    EXPECT_EQ(batch_tensor_container.front().shape(), expected_dimensions);
+    EXPECT_EQ(batch_tensor_container.back().shape(), expected_dimensions);
 }
 
 int main(int argc, char** argv)

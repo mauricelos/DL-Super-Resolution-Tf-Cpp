@@ -16,17 +16,13 @@
 class DlModelHelper
 {
   public:
-    DlModelHelper(std::uint32_t input_height = 1080U,
-                  std::uint32_t input_width = 1920U,
-                  std::uint32_t num_required_image_channels = 3U)
-        : input_height_(input_height),
-          input_width_(input_width),
-          num_required_image_channels_(num_required_image_channels)
-    {
-    }
+    DlModelHelper() = default;
 
     tensorflow::Status CreateTensorFromImage(const std::string& image_file_name,
-                                             std::vector<tensorflow::Tensor>& tensor_container);
+                                             std::vector<tensorflow::Tensor>& tensor_container,
+                                             const std::array<std::uint32_t, 3>& tensor_dimsensions = {1080U,
+                                                                                                       1920U,
+                                                                                                       3U});
 
   private:
     inline bool EndsWith(std::string const& file_name, std::string const& file_suffix)
@@ -36,6 +32,11 @@ class DlModelHelper
                    : false;
     }
 
+    tensorflow::Status CreateBatchFromTensors(std::uint32_t& batch_size,
+                                              std::vector<tensorflow::Tensor>& input_tensor_container_ground_truth,
+                                              std::vector<tensorflow::Tensor>& input_tensor_container_down_sampled,
+                                              std::vector<tensorflow::Tensor>& batch_tensor_container);
+
     tensorflow::Status ReadEntireFile(tensorflow::Env* env, const std::string& filename, tensorflow::Tensor* output);
 
     const std::string image_file_reader_{"image_file_reader"};
@@ -44,9 +45,8 @@ class DlModelHelper
     const std::string float_caster_{"float_caster"};
     const std::string dim_expander_{"dimension_expander"};
     const std::string image_resizer_{"bilinear_image_resizer"};
-    std::uint32_t input_height_;
-    std::uint32_t input_width_;
-    std::uint32_t num_required_image_channels_;
+    const std::string stack_ground_truth_container_{"stack_ground_truth_container"};
+    const std::string stack_down_sampled_container_{"stack_down_sampled_container"};
     std::vector<std::pair<std::string, tensorflow::Tensor>> inputs;
 };
 
