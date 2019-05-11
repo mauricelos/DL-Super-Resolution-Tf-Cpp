@@ -4,3 +4,6 @@
 [submodule "external_dependencies/googletest"]
 	path = external_dependencies/googletest
 	url = https://github.com/google/googletest
+[submodule "external_dependencies/opencv"]
+	path = external_dependencies/opencv
+	url = https://github.com/opencv/opencv

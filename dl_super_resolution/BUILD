@@ -15,6 +15,7 @@ cc_library(
     strip_include_prefix = "include",
     visibility = ["//visibility:public"],
     deps = [
+        "@opencv",
         "@org_tensorflow//tensorflow:libtensorflow_cc.so",
         "@org_tensorflow//tensorflow/cc:cc_ops",
         "@org_tensorflow//tensorflow/cc:client_session",

@@ -5,6 +5,12 @@ local_repository(
     path = "external_dependencies/googletest",
 )
 
+new_local_repository(
+    name = "opencv",
+    build_file = "external_dependencies/opencv/opencv.BUILD",
+    path = "external_dependencies/opencv/install",
+)
+
 local_repository(
     name = "org_tensorflow",
     path = "external_dependencies/tensorflow",
