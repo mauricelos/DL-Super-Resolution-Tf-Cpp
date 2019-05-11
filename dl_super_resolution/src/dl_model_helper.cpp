@@ -47,12 +47,16 @@ tensorflow::Status DlModelHelper::CreateTensorFromImage(const std::string& image
             image_processor_scope,
             {static_cast<std::int32_t>(tensor_dimsensions[0]), static_cast<std::int32_t>(tensor_dimsensions[1])}));
 
+    tensorflow::ops::Div(image_processor_scope.WithOpName("normalizer"),
+                         tensorflow::ops::Sub(image_processor_scope, std::move(resized_tensor), {0.0f}),
+                         {255.0f});
+
     TF_RETURN_IF_ERROR(image_processor_scope.ToGraphDef(&graph));
 
     std::unique_ptr<tensorflow::Session> session(tensorflow::NewSession(tensorflow::SessionOptions()));
 
     TF_RETURN_IF_ERROR(session->Create(graph));
-    TF_RETURN_IF_ERROR(session->Run({inputs}, {image_resizer_}, {}, &tensor_container));
+    TF_RETURN_IF_ERROR(session->Run({inputs}, {"normalizer"}, {}, &tensor_container));
 
     return tensorflow::Status::OK();
 }
@@ -112,6 +116,13 @@ tensorflow::Status DlModelHelper::CreateBatchFromTensors(
 
         return tensorflow::Status::OK();
     }
+}
+
+cv::Mat DlModelHelper::CreateImageFromTensor(tensorflow::Tensor& tensor)
+{
+    cv::Mat tensor_image(tensor.dim_size(1), tensor.dim_size(2), CV_32FC3, tensor.flat<float>().data());
+
+    return tensor_image;
 }
 
 tensorflow::Status DlModelHelper::ReadEntireFile(tensorflow::Env* env,

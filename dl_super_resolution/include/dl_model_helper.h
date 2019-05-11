@@ -13,6 +13,8 @@
 #include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/public/session.h"
 
+#include <opencv2/core/mat.hpp>
+
 class DlModelHelper
 {
   public:
@@ -24,6 +26,13 @@ class DlModelHelper
                                                                                                        1920U,
                                                                                                        3U});
 
+    tensorflow::Status CreateBatchFromTensors(std::uint32_t& batch_size,
+                                              std::vector<tensorflow::Tensor>& input_tensor_container_ground_truth,
+                                              std::vector<tensorflow::Tensor>& input_tensor_container_down_sampled,
+                                              std::vector<tensorflow::Tensor>& batch_tensor_container);
+
+    cv::Mat CreateImageFromTensor(tensorflow::Tensor& tensor);
+
   private:
     inline bool EndsWith(std::string const& file_name, std::string const& file_suffix)
     {
@@ -31,11 +40,6 @@ class DlModelHelper
                    ? std::equal(file_suffix.rbegin(), file_suffix.rend(), file_name.rbegin())
                    : false;
     }
-
-    tensorflow::Status CreateBatchFromTensors(std::uint32_t& batch_size,
-                                              std::vector<tensorflow::Tensor>& input_tensor_container_ground_truth,
-                                              std::vector<tensorflow::Tensor>& input_tensor_container_down_sampled,
-                                              std::vector<tensorflow::Tensor>& batch_tensor_container);
 
     tensorflow::Status ReadEntireFile(tensorflow::Env* env, const std::string& filename, tensorflow::Tensor* output);
 

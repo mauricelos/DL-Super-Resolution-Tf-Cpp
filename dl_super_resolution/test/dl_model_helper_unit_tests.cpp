@@ -1,4 +1,5 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
+#include <opencv2/highgui/highgui.hpp>
 
 #define private public
 #include <dl_model_helper.h>
@@ -9,8 +10,21 @@ class DlModelHelperTest : public testing::Test
     DlModelHelper unit_{};
 
   private:
-    const std::string path_to_test_image_{"dl_super_resolution/images/unit_test_image.jpeg"};
+    bool CheckIfDisplayedTensorImageIsComplete(const cv::Mat& tensor_image);
+
+    char pressed_key_;
+    const std::string image_headline_{"tensor_image: Press 'y' if image is displaying correctly!"};
+    const std::string path_to_test_image_{"dl_super_resolution/images/unit_test_images/unit_test_image.jpeg"};
 };
+
+bool DlModelHelperTest::CheckIfDisplayedTensorImageIsComplete(const cv::Mat& tensor_image)
+{
+    cv::namedWindow(image_headline_, cv::WindowFlags::WINDOW_AUTOSIZE);
+    cv::imshow(image_headline_, tensor_image);
+    pressed_key_ = cv::waitKey(0);
+
+    return pressed_key_ == 'y' ? true : false;
+}
 
 TEST_F(DlModelHelperTest, EndsWith_FilenameEndsWithPNGSuffix)
 {
@@ -66,6 +80,19 @@ TEST_F(DlModelHelperTest, CreateBatchFromTensors_TwoTensorsSamePictureSameConfig
 
     EXPECT_EQ(batch_tensor_container.front().shape(), expected_dimensions);
     EXPECT_EQ(batch_tensor_container.back().shape(), expected_dimensions);
+}
+
+TEST_F(DlModelHelperTest, CreateImageFromTensor_TestImage)
+{
+    const std::array<std::uint32_t, 3> tensor_dimensions{540U, 960U, 3U};
+    const cv::Size image_dimensions{tensor_dimensions[1], tensor_dimensions[0]};
+    std::vector<tensorflow::Tensor> unit_test_tensor_container;
+    auto result = unit_.CreateTensorFromImage(path_to_test_image_, unit_test_tensor_container, tensor_dimensions);
+
+    auto tensor_image = unit_.CreateImageFromTensor(unit_test_tensor_container.front());
+
+    EXPECT_TRUE(CheckIfDisplayedTensorImageIsComplete(tensor_image));
+    EXPECT_EQ(tensor_image.size(), image_dimensions);
 }
 
 int main(int argc, char** argv)
