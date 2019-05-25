@@ -19,6 +19,7 @@ cc_library(
         "@org_tensorflow//tensorflow:libtensorflow_cc.so",
         "@org_tensorflow//tensorflow/cc:cc_ops",
         "@org_tensorflow//tensorflow/cc:client_session",
+        "@org_tensorflow//tensorflow/cc:gradients",
         "@org_tensorflow//tensorflow/core:framework",
         "@org_tensorflow//tensorflow/core:tensorflow",
     ],
