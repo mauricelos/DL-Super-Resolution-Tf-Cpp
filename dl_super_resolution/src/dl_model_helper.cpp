@@ -47,16 +47,16 @@ tensorflow::Status DlModelHelper::CreateTensorFromImage(const std::string& image
             image_processor_scope,
             {static_cast<std::int32_t>(tensor_dimsensions[0]), static_cast<std::int32_t>(tensor_dimsensions[1])}));
 
-    tensorflow::ops::Div(image_processor_scope.WithOpName("normalizer"),
-                         tensorflow::ops::Sub(image_processor_scope, std::move(resized_tensor), {0.0f}),
-                         {255.0f});
+    tensorflow::ops::Div(image_processor_scope.WithOpName(image_normalizer_),
+                         tensorflow::ops::Sub(image_processor_scope, std::move(resized_tensor), {tensor_mean_}),
+                         {tensor_std_});
 
     TF_RETURN_IF_ERROR(image_processor_scope.ToGraphDef(&graph));
 
     std::unique_ptr<tensorflow::Session> session(tensorflow::NewSession(tensorflow::SessionOptions()));
 
     TF_RETURN_IF_ERROR(session->Create(graph));
-    TF_RETURN_IF_ERROR(session->Run({inputs}, {"normalizer"}, {}, &tensor_container));
+    TF_RETURN_IF_ERROR(session->Run({inputs}, {image_normalizer_}, {}, &tensor_container));
 
     return tensorflow::Status::OK();
 }

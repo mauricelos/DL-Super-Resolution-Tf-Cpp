@@ -43,12 +43,15 @@ class DlModelHelper
 
     tensorflow::Status ReadEntireFile(tensorflow::Env* env, const std::string& filename, tensorflow::Tensor* output);
 
+    const float tensor_mean_{0.0f};
+    const float tensor_std_{255.0f};
     const std::string image_file_reader_{"image_file_reader"};
     const std::string image_png_reader_{"image_png_reader"};
     const std::string image_jpeg_reader_{"image_jpeg_reader"};
     const std::string float_caster_{"float_caster"};
     const std::string dim_expander_{"dimension_expander"};
     const std::string image_resizer_{"bilinear_image_resizer"};
+    const std::string image_normalizer_{"normalizer"};
     const std::string stack_ground_truth_container_{"stack_ground_truth_container"};
     const std::string stack_down_sampled_container_{"stack_down_sampled_container"};
     std::vector<std::pair<std::string, tensorflow::Tensor>> inputs;
