@@ -5,11 +5,14 @@ In this project, I want to create a state of the art deep learning super resolut
 #### Required Installations
 - Bazel -> [Bazel Install Guide](https://docs.bazel.build/versions/master/install.html)
 - Tensorflow -> [Tensorflow Install Guide from source](https://www.tensorflow.org/install/source)
+- OpenCV -> [OpenCV Guide for Integration in bazel](https://stackoverflow.com/questions/34984290/building-opencv-code-using-bazel)
 
 #### Used Setup
 - Bazel: v.0.23.0
 - Tensorflow: v.2.0 (git checkout r2.0)
 - Googletest: v.1.8.x (git checkout v.1.8.x)
+- OpenCV: v.3.4 (git checkout 3.4)
+- CMake/Make (only for OpenCV)
 - CUDA: v.9.0
 - Cudnn: v.7.5
 - gcc/g++: v.4.8
